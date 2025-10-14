@@ -102,11 +102,6 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.12.0</version>
                 <configuration>
-                    <links>
-                        <link>https://hsgamer.github.io/HSCore/</link>
-                        <link>https://hsgamer.github.io/MinigameCore/</link>
-                        <link>https://projectunified.github.io/UniHologram/</link>
-                    </links>
                     <source>${java.version}</source>
                     <outputDirectory>${project.build.directory}/reports</outputDirectory>
                 </configuration>

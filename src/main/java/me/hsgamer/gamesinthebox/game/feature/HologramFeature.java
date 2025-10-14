@@ -98,7 +98,9 @@ public class HologramFeature implements Feature {
      */
     @NotNull
     public Hologram<Location> createHologram(@NotNull Location location) {
-        return hologramProvider.createHologram(baseName + "-" + UUID.randomUUID(), location);
+        Hologram<Location> hologram = hologramProvider.createHologram(baseName + "-" + UUID.randomUUID(), location);
+        holograms.add(hologram);
+        return hologram;
     }
 
     @Override

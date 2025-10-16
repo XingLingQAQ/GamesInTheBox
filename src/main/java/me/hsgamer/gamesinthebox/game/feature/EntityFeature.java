@@ -186,6 +186,10 @@ public abstract class EntityFeature implements Feature {
                         break;
                     }
                     Scheduler.providingPlugin(EntityFeature.class).sync().runLocationTask(spawnRequest.location, () -> {
+                        if (!spawnRequest.location.getChunk().isLoaded()) {
+                            spawnRequest.completableFuture.completeExceptionally(new IllegalStateException("The chunk is not loaded"));
+                            return;
+                        }
                         Entity entity = createEntity(spawnRequest.location);
                         if (entity == null) {
                             spawnRequest.completableFuture.completeExceptionally(new IllegalStateException("Cannot create the entity"));

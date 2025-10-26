@@ -20,6 +20,7 @@ import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.bukkit.scheduler.Task;
 import me.hsgamer.minigamecore.base.Feature;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
@@ -185,12 +186,16 @@ public abstract class EntityFeature implements Feature {
                     if (spawnRequest == null) {
                         break;
                     }
-                    Scheduler.providingPlugin(EntityFeature.class).sync().runLocationTask(spawnRequest.location, () -> {
-                        if (!spawnRequest.location.getChunk().isLoaded()) {
-                            spawnRequest.completableFuture.completeExceptionally(new IllegalStateException("The chunk is not loaded"));
-                            return;
-                        }
-                        Entity entity = createEntity(spawnRequest.location);
+                    Location location = spawnRequest.location;
+                    World world = Objects.requireNonNull(location.getWorld());
+                    int chunkX = location.getBlockX() >> 4;
+                    int chunkZ = location.getBlockZ() >> 4;
+                    if (!world.isChunkLoaded(chunkX, chunkZ)) {
+                        spawnRequest.completableFuture.completeExceptionally(new IllegalStateException("The chunk is not loaded"));
+                        continue;
+                    }
+                    Scheduler.providingPlugin(EntityFeature.class).sync().runLocationTask(location, () -> {
+                        Entity entity = createEntity(location);
                         if (entity == null) {
                             spawnRequest.completableFuture.completeExceptionally(new IllegalStateException("Cannot create the entity"));
                         } else {
